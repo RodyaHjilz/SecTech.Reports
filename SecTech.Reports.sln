@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34714.143
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sectech.Reports.Worker", "Sectech.Reports.Worker\Sectech.Reports.Worker.csproj", "{4D5F2F5B-A822-41A4-BE0A-03A752B2AAFB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecTech.Reports.API", "SecTech.Reports.API\SecTech.Reports.API.csproj", "{38229229-22E9-429E-A692-31465D7EF26A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4D5F2F5B-A822-41A4-BE0A-03A752B2AAFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D5F2F5B-A822-41A4-BE0A-03A752B2AAFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D5F2F5B-A822-41A4-BE0A-03A752B2AAFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D5F2F5B-A822-41A4-BE0A-03A752B2AAFB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38229229-22E9-429E-A692-31465D7EF26A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38229229-22E9-429E-A692-31465D7EF26A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38229229-22E9-429E-A692-31465D7EF26A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38229229-22E9-429E-A692-31465D7EF26A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {34BACD59-A329-4664-9E76-C8965EADD3E1}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,6 @@
+@Sectech.Reports.Worker_HostAddress = http://localhost:5129
+
+GET {{Sectech.Reports.Worker_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
