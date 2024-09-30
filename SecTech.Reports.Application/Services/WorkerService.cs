@@ -1,14 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
-using Microsoft.Identity.Client;
 using SecTech.Reports.Domain.Entity;
 using SecTech.Reports.Domain.Interfaces.Repository;
 using SecTech.Reports.Domain.Interfaces.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace SecTech.Reports.Application.Services
 {
@@ -23,20 +17,19 @@ namespace SecTech.Reports.Application.Services
         }
         public async Task<bool> SaveToDatabase(string message)
         {
-            //Event evnt;
-            //User user;
-            //Attendance attendance;
-            var attendance = JsonSerializer.Deserialize<Attendance>(message);
-            await _attendanceRepository.CreateAsync(attendance);
-            _logger.LogInformation("Attendance saved to database: {attendance}", attendance);
-           // SerializeMessage(message, out evnt, out user, out attendance);
-            return true;
+            try
+            {
+                var attendance = JsonSerializer.Deserialize<Attendance>(message);
+                await _attendanceRepository.CreateAsync(attendance);
+                _logger.LogInformation("Attendance saved to database with id: {attendance}", attendance.Id);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Failed to save attendance to database. Got message from Rabbit: {message}", message);
+                return false;
+            }
         }
-
-        //private void SerializeMessage(object message, out Event evnt, out User usr, out Attendance atndnc)
-        //{
-            
-        //}
 
     }
 }

@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\SecTech.Reports.Application\SecTech.Reports.Application.csproj" />
     <ProjectReference Include="..\SecTech.Reports.DAL\SecTech.Reports.DAL.csproj" />
   </ItemGroup>
 

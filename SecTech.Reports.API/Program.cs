@@ -1,4 +1,6 @@
+using SecTech.Reports.Application.Services;
 using SecTech.Reports.DAL.Infrastructure;
+using SecTech.Reports.Domain.Interfaces.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +12,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDataAccessLayer(builder.Configuration);
-
+builder.Services.AddScoped<IAttendanceService, AttendanceSerivce>();
 
 var app = builder.Build();
 

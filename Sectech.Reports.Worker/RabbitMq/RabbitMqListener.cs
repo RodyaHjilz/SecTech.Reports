@@ -1,6 +1,4 @@
-﻿
-using Microsoft.IdentityModel.Tokens;
-using RabbitMQ.Client;
+﻿using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using SecTech.Reports.Domain.Interfaces.Services;
 using System.Text;
@@ -9,24 +7,53 @@ namespace Sectech.Reports.Worker.RabbitMq
 {
     public class RabbitMqListener : BackgroundService
     {
-        private readonly IConnection _connection;
-        private readonly IModel _channel;
-        private readonly string _queueName;
+        private IConnection _connection;
+        private IModel _channel;
+        private const string _queueName = "reports_queue";
         private readonly ILogger<RabbitMqListener> _logger;
         private readonly IServiceScopeFactory _serviceScopeFactory;
+        private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
         public RabbitMqListener(ILogger<RabbitMqListener> logger, IServiceScopeFactory serviceScopeFactory)
         {
-            var factory = new ConnectionFactory() { HostName = "localhost" };
-            _connection = factory.CreateConnection();
-            _channel = _connection.CreateModel();
-            _queueName = "reports_queue";
-
-            // Создаем очередь при инициализации
-            _channel.QueueDeclare(queue: _queueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
             _logger = logger;
             _serviceScopeFactory = serviceScopeFactory;
+            Task.Run(() => InitializeConnection(_cancellationTokenSource.Token)).Wait();
         }
 
+        private async Task InitializeConnection(CancellationToken cancellationToken)
+        {
+            int retryCount = 0;
+            var factory = new ConnectionFactory() { HostName = "localhost" };
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                try
+                {
+                    _connection = factory.CreateConnection();
+                    _channel = _connection.CreateModel();
+
+                    _channel.QueueDeclare(queue: _queueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
+                    _connection.ConnectionShutdown += OnConnectionShutDown;
+                    _logger.LogInformation("RabbitMqService initialized successful. Queuename: {queue}", _queueName);
+                    retryCount = 0;
+                    return;
+                }
+                catch(Exception ex)
+                {
+                    retryCount++;
+                    var delay = TimeSpan.FromSeconds(Math.Min(30, Math.Pow(2, retryCount))); // Экспоненциальная задержка с максимумом 30 секунд
+
+                    _logger.LogError(ex, "Failed to connect to RabbitMQ. Retrying in {delay} seconds...", delay.TotalSeconds);
+                    await Task.Delay(delay, cancellationToken); // Задержка между попытками
+                }
+            }
+        }
+
+
+        private void OnConnectionShutDown(object sender, ShutdownEventArgs args)
+        {
+            _logger.LogWarning("RabbitMq connection was closed. Trying to reconnect...");
+            Task.Run(() => InitializeConnection(_cancellationTokenSource.Token));
+        }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
@@ -61,9 +88,10 @@ namespace Sectech.Reports.Worker.RabbitMq
 
         public override void Dispose()
         {
+            _cancellationTokenSource.Cancel();
             _channel?.Close();
             _connection?.Close();
-            base.Dispose();
+            _cancellationTokenSource.Dispose();
         }
 
 

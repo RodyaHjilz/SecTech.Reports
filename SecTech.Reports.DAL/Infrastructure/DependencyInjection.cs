@@ -19,8 +19,6 @@ namespace SecTech.Reports.DAL.Infrastructure
         private static void InitRepositories(this IServiceCollection services)
         {
             services.AddScoped<IBaseRepository<Attendance>, BaseRepository<Attendance>>();
-            services.AddScoped<IBaseRepository<Event>, BaseRepository<Event>>();
-            services.AddScoped<IBaseRepository<User>, BaseRepository<User>>();
             
 
         }
