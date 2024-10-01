@@ -13,6 +13,8 @@ namespace Sectech.Reports.Worker.RabbitMq
         private readonly ILogger<RabbitMqListener> _logger;
         private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+        public bool IsConnected => _connection != null && _connection.IsOpen && _channel != null && _channel.IsOpen;
+        public Guid ListenerId = Guid.NewGuid();
         public RabbitMqListener(ILogger<RabbitMqListener> logger, IServiceScopeFactory serviceScopeFactory)
         {
             _logger = logger;
@@ -33,7 +35,7 @@ namespace Sectech.Reports.Worker.RabbitMq
 
                     _channel.QueueDeclare(queue: _queueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
                     _connection.ConnectionShutdown += OnConnectionShutDown;
-                    _logger.LogInformation("RabbitMqService initialized successful. Queuename: {queue}", _queueName);
+                    _logger.LogInformation("RabbitMqService initialized successful. Queuename: {queue}. Listener ID: {id}", _queueName, ListenerId);
                     retryCount = 0;
                     return;
                 }
@@ -75,15 +77,12 @@ namespace Sectech.Reports.Worker.RabbitMq
 
         private async Task SaveMessageToDatabaseAsync(string message)
         {
-            // Логика сохранения в базу данных
             _logger.LogInformation($"Saving message to database: {message}");
             using (var scope = _serviceScopeFactory.CreateScope())
             {
                 var workerService = scope.ServiceProvider.GetRequiredService<IWorkerService>();
                 await workerService.SaveToDatabase(message);
             }
-            // await _workerService.SaveToDatabase(message);
-            // Здесь можно вызвать сервис для работы с базой данных
         }
 
         public override void Dispose()
