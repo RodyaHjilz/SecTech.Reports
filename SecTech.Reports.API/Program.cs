@@ -1,11 +1,18 @@
+using SecTech.Reports.Application.Services;
+using SecTech.Reports.DAL.Infrastructure;
+using SecTech.Reports.Domain.Interfaces.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddDataAccessLayer(builder.Configuration);
+builder.Services.AddScoped<IAttendanceService, AttendanceSerivce>();
 
 var app = builder.Build();
 
@@ -17,7 +24,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
 
 app.MapControllers();
